@@ -7,6 +7,7 @@ from app.utils.logger import console_write
 # 버튼 없는 일반적인 카카오 알림톡 메시지
 async def kakao_message_send(msg: str, servicename: str, receiver_number: str, templatecode: str):
     try:
+        console_write("발송: KAKAO msg send")
         conn = http.client.HTTPSConnection(DefaultInfo.CJMPLACE_URL, timeout=5)
 
         millis = int(round(time.time() * 1000))
@@ -35,7 +36,7 @@ async def kakao_message_send(msg: str, servicename: str, receiver_number: str, t
         data_read = res.read()
         data = json.loads(data_read.decode("utf-8"))
 
-        console_write(data)
+        console_write("KAKAO 발송 결과: ", data)
         return data
 
     except Exception as e:
@@ -45,7 +46,7 @@ async def kakao_message_send(msg: str, servicename: str, receiver_number: str, t
 # SMS 단문 문자 발송
 async def sms_message_send(msg: str, title: str, servicename: str, receiver_number: str):
     try:
-        console_write("sms == msg send")
+        console_write("발송: SMS msg send")
         conn = http.client.HTTPSConnection(DefaultInfo.CJMPLACE_URL, timeout=5)
 
         millis = int(round(time.time() * 1000))
@@ -75,7 +76,8 @@ async def sms_message_send(msg: str, title: str, servicename: str, receiver_numb
         data_read = res.read()
         data = json.loads(data_read.decode("utf-8"))
 
-        console_write("sms == ", data)
+        console_write("SMS 발송 결과: ", data)
+        return data
 
     except Exception as e:
         console_write("sms error == ", e)

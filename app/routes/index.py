@@ -14,4 +14,4 @@ async def index():
     :return:
     """
     current_time = datetime.utcnow()
-    return Response(f"Smeffi Logis WAS (UTC: {current_time.strftime('%Y.%m.%d %H:%M:%S')})")
+    return Response(f"Smeffi Message Server (UTC: {current_time.strftime('%Y.%m.%d %H:%M:%S')})")

@@ -19,5 +19,5 @@ class DefaultInfo:
     # 보내는사람 번호.
     SENDER_NUMBER = {
         "smeffilogis" : "07086809906"
-        , "smeffilogistest" : "00000000000"
+
     }
