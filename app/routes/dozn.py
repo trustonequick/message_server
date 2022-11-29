@@ -9,6 +9,8 @@ import aiohttp
 from fastapi import APIRouter
 from starlette import status
 
+from app.common.consts import DOZN_URL_TEST, DOZN_API_KEY_TEST, DOZN_URL, DOZN_ORG_CODE, DOZN_API_KEY
+
 router = APIRouter(
     prefix="/dozn",
     tags=["DOZN"],
@@ -36,6 +38,7 @@ class DoznParmas(BaseModel):
     account_bank: str = None
     account_number: str = None
     amount: int = None
+    is_test: bool = None
 
 
 @router.post("/transfer", status_code=status.HTTP_200_OK)
@@ -44,15 +47,26 @@ async def transfer_rider(params: DoznParmas):
     tr_dt = datetime.today().strftime("%Y%m%d")
     try:
         async with aiohttp.ClientSession() as sess:
-            url = f"{c.DOZN_URL}{DoznApi.transfer}"
-            dozn_params = {
-                "api_key": c.DOZN_API_KEY,
-                "org_code": c.DOZN_ORG_CODE,
-                "telegram_no": params.firm_log_count,
-                "rv_bank_code": params.account_bank,
-                "rv_account": params.account_number,
-                "amount": params.amount
-            }
+            if params.is_test:
+                url = f"{DOZN_URL_TEST}{DoznApi.transfer}"
+                dozn_params = {
+                    "api_key": DOZN_API_KEY_TEST,
+                    "org_code": DOZN_ORG_CODE,
+                    "telegram_no": params.firm_log_count,
+                    "rv_bank_code": params.account_bank,
+                    "rv_account": params.account_number,
+                    "amount": params.amount
+                }
+            else:
+                url = f"{DOZN_URL}{DoznApi.transfer}"
+                dozn_params = {
+                    "api_key": DOZN_API_KEY,
+                    "org_code": DOZN_ORG_CODE,
+                    "telegram_no": params.firm_log_count,
+                    "rv_bank_code": params.account_bank,
+                    "rv_account": params.account_number,
+                    "amount": params.amount
+                }
             headers = {"Content-Type": "application/json; charset=utf-8"}
 
             # 펌뱅킹 요청
@@ -65,13 +79,22 @@ async def transfer_rider(params: DoznParmas):
                                 # 은행 timeout 발생, 이체처리결과 조회
                                 # 타임아웃, 처리중일 경우 처리여부 확인할때까지 반복
                                 async with aiohttp.ClientSession() as sess2:
-                                    url2 = f"{c.DOZN_URL}{DoznApi.transfer_check}"
-                                    params2 = {
-                                        "api_key": c.DOZN_API_KEY,
-                                        "org_code": c.DOZN_ORG_CODE,
-                                        "org_telegram_no": params.firm_log_count,
-                                        "tr_dt": tr_dt
-                                    }
+                                    if params.is_test:
+                                        url2 = f"{DOZN_URL_TEST}{DoznApi.transfer_check}"
+                                        params2 = {
+                                            "api_key": DOZN_API_KEY_TEST,
+                                            "org_code": DOZN_ORG_CODE,
+                                            "org_telegram_no": params.firm_log_count,
+                                            "tr_dt": tr_dt
+                                        }
+                                    else:
+                                        url2 = f"{DOZN_URL}{DoznApi.transfer_check}"
+                                        params2 = {
+                                            "api_key": DOZN_API_KEY,
+                                            "org_code": DOZN_ORG_CODE,
+                                            "org_telegram_no": params.firm_log_count,
+                                            "tr_dt": tr_dt
+                                        }
                                     headers2 = {"Content-Type": "application/json; charset=utf-8"}
 
                                     async with sess2.post(url=url2, json=params2, headers=headers2) as res2:
