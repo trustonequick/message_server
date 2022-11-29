@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.common.config import conf
-from app.routes import index, message, dozn
+from app.routes import index, message, dozn, coocon
 
 
 def create_app():
@@ -18,11 +18,12 @@ def create_app():
     app.include_router(index.router)
     app.include_router(message.router)
     app.include_router(dozn.router)
+    app.include_router(coocon.router)
 
     return app
 
 
 if __name__ == '__main__':
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=9000, reload=True)
 else:
     app = create_app()

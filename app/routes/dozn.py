@@ -43,7 +43,6 @@ class DoznParmas(BaseModel):
 
 @router.post("/transfer", status_code=status.HTTP_200_OK)
 async def transfer_rider(params: DoznParmas):
-    c = conf()
     tr_dt = datetime.today().strftime("%Y%m%d")
     try:
         async with aiohttp.ClientSession() as sess:

@@ -12,6 +12,14 @@ DOZN_API_KEY = "90ab5b89-ecc5-4479-9c19-a3ec0f8388ef"
 DOZN_ORG_CODE = "10000292"
 
 
+# ======================= Coocon production =======================
+COOCON_URL = "https://sgw.coocon.co.kr/sol/gateway/scrap_wapi_std.jsp"
+COOCON_API_KEY = "7cPyVPdHrtuM7p83g2Bu"
+COOCON_API_ID = "1320"
+
+# ======================= Coocon TestServer =======================
+COOCON_URL_TEST = "https://dev2.coocon.co.kr:8443 /sol/gateway/scrap_wapi_std.jsp"
+
 @dataclass
 class DefaultInfo:
     CJMPLACE_URL = "gw-api.cjmplace.com:4433"
