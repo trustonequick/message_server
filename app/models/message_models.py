@@ -2,19 +2,28 @@ from pydantic.main import BaseModel
 
 class KokaoRequest(BaseModel):
     msg: str
-    servicename: str
+    sender_number: str
     receiver_number: str
-    templatecode: str
+    template_code: str
 
-    class Config:
-        orm_mode = True
+
+class KokaoBtnRequest(BaseModel):
+    msg: str
+    sender_number: str
+    receiver_number: str
+    template_code: str
+    btn_name: str
+    link_url: str
 
 
 class SMSRequest(BaseModel):
     msg: str
     title: str = None
-    servicename: str
-    receivernumber: str
+    sender_number: str
+    receiver_number: str
 
-    class Config:
-        orm_mode = True
+
+
+class SenderResponse(BaseModel):
+    results: list = None
+
