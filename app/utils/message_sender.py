@@ -40,7 +40,8 @@ async def kakao_message_send(msg: str, sender_number: str, receiver_number: str,
         return data
 
     except Exception as e:
-        console_write(e)
+        console_write("kakao error == ", e)
+        return {'results': [{'code': '0000', 'desc': 'Fail', 'msg_key': ''}]}
 
 
 # 버튼 있는 카카오 알림톡 메시지
@@ -89,7 +90,8 @@ async def kakao_button_message_send(msg: str, sender_number: str, receiver_numbe
         return data
 
     except Exception as e:
-        console_write(e)
+        console_write("kakao button error == ", e)
+        return {'results': [{'code': '0000', 'desc': 'Fail', 'msg_key': ''}]}
 
 
 
@@ -131,3 +133,4 @@ async def sms_message_send(msg: str, title: str, sender_number: str, receiver_nu
 
     except Exception as e:
         console_write("sms error == ", e)
+        return {'results': [{'code': '0000', 'desc': 'Fail', 'msg_key': ''}]}
