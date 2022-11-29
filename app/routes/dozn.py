@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel
+from starlette.responses import JSONResponse
 
 from app.common.config import conf
 import aiohttp
@@ -31,23 +32,23 @@ class DoznApi(DefaultEnum):
 
 
 class DoznParmas(BaseModel):
-    firm_log_count: int
-    account_bank: int
-    account_number: int
-    amount: int
+    firm_log_count: int = None
+    account_bank: str = None
+    account_number: str = None
+    amount: int = None
 
 
-@router.get("/transfer", status_code=status.HTTP_200_OK)
+@router.post("/transfer", status_code=status.HTTP_200_OK)
 async def transfer_rider(params: DoznParmas):
     c = conf()
     tr_dt = datetime.today().strftime("%Y%m%d")
     try:
         async with aiohttp.ClientSession() as sess:
             url = f"{c.DOZN_URL}{DoznApi.transfer}"
-            params = {
+            dozn_params = {
                 "api_key": c.DOZN_API_KEY,
                 "org_code": c.DOZN_ORG_CODE,
-                "telegram_no": params.firm_log_count + 1,
+                "telegram_no": params.firm_log_count,
                 "rv_bank_code": params.account_bank,
                 "rv_account": params.account_number,
                 "amount": params.amount
@@ -55,7 +56,7 @@ async def transfer_rider(params: DoznParmas):
             headers = {"Content-Type": "application/json; charset=utf-8"}
 
             # 펌뱅킹 요청
-            async with sess.post(url=url, json=params, headers=headers) as res:
+            async with sess.post(url=url, json=dozn_params, headers=headers) as res:
                 try:
                     result = await res.json()
                     if res.status != status.HTTP_200_OK:
@@ -66,9 +67,9 @@ async def transfer_rider(params: DoznParmas):
                                 async with aiohttp.ClientSession() as sess2:
                                     url2 = f"{c.DOZN_URL}{DoznApi.transfer_check}"
                                     params2 = {
-                                        "api_key": c.DOZN_API_KEY_TEST,
+                                        "api_key": c.DOZN_API_KEY,
                                         "org_code": c.DOZN_ORG_CODE,
-                                        "org_telegram_no": params.firm_log_count + 1,
+                                        "org_telegram_no": params.firm_log_count,
                                         "tr_dt": tr_dt
                                     }
                                     headers2 = {"Content-Type": "application/json; charset=utf-8"}
@@ -79,18 +80,21 @@ async def transfer_rider(params: DoznParmas):
                                             if result2['error_code'] != "VTIM" and result2['error_code'] != "0011":
                                                 # 타임아웃, 처리중 아니면 에러처리하고 끝.
                                                 err_message = f"{result2['error_code']}: {result2['error_message']}"
-                                                return err_message
+                                                return JSONResponse(status_code=400, content=err_message)
                                         else:
+                                            transfer_at = result2['transfer_at']
+                                            result2['request_at'] = transfer_at
                                             return result2
+
                         else:
                             err_message = f"{result['error_code']}: {result['error_message']}"
-                            return err_message
+                            return JSONResponse(status_code=400, content=err_message)
 
                     else:
                         return result
 
                 except Exception as e:
-                    return e
+                    return JSONResponse(status_code=400, content=e)
 
     except Exception as e:
-        return e
+        return JSONResponse(status_code=400, content=e)
