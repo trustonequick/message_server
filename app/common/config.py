@@ -39,5 +39,5 @@ def conf():
     환경 불러오기
     :return:
     """
-    config = dict(base=Config(), local=LocalConfig())
+    config = dict(base=Config(), local=ProdConfig())
     return config.get(environ.get("API_ENV", "local"))

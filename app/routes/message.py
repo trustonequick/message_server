@@ -1,14 +1,15 @@
 import threading
 
 from fastapi import APIRouter
-from app.models.message_models import KokaoRequest, KokaoBtnRequest, SMSRequest, SenderResponse
-from app.utils.message_sender import kakao_message_send, kakao_button_message_send,sms_message_send
+from app.models.message_models import KokaoRequest, KokaoBtnRequest, SMSRequest, SenderResponse\
+                                    , SMSMultiRequest, SenderMultiResponse
+from app.utils.message_sender import kakao_message_send, kakao_button_message_send,sms_message_send, smsmulti_message_send
 from app.utils.logger import console_write
 
 router = APIRouter()
 
 @router.post("/kakao", status_code=200, response_model=SenderResponse)
-async def message_kakao_receive(req: KokaoRequest):
+async def message_kakao_sender(req: KokaoRequest):
     results = await kakao_message_send(req.msg, req.sender_number, req.receiver_number, req.template_code)
     resultdata = SenderResponse()
     resultdata.results = list(results["results"])
@@ -17,7 +18,7 @@ async def message_kakao_receive(req: KokaoRequest):
 
 
 @router.post("/kakaobtn", status_code=200, response_model=SenderResponse)
-async def message_kakao_receive(req: KokaoBtnRequest):
+async def message_kakaobtn_sender(req: KokaoBtnRequest):
     results = await kakao_button_message_send(req.msg, req.sender_number, req.receiver_number, req.template_code, req.btn_name, req.link_url)
     resultdata = SenderResponse()
     resultdata.results = list(results["results"])
@@ -26,20 +27,30 @@ async def message_kakao_receive(req: KokaoBtnRequest):
 
 
 @router.post("/sms", status_code=200, response_model=SenderResponse)
-async def message_sms_receive(req: SMSRequest):
+async def message_sms_sender(req: SMSRequest):
     results = await sms_message_send(req.msg, req.title, req.sender_number, req.receiver_number)
     resultdata = SenderResponse()
     resultdata.results = list(results["results"])
 
     return resultdata
 
+@router.post("/smsmulti", status_code=200, response_model=SenderMultiResponse)
+async def message_smsmulti_sender(req: SMSMultiRequest):
+
+    results = await smsmulti_message_send(req.sender_data)
+    resultdata = SenderResponse()
+    resultdata.results = list(results["results"])
+
+    return resultdata
 
 
-
+# @router.post("/sms_callback", status_code=200)
+# async def message_sms_receiver():
+#     console_write(results)
 #
-# @router.post("/receive_results", status_code=200)
-# async def message_receive_results(msg: str, title: str, servicename: str, receivernumber: str):
-#     results = await sms_message_send(msg, title, servicename, receivernumber)
+#
+# @router.post("/kakao_callback", status_code=200)
+# async def message_kakao_receiver():
 #     console_write(results)
 
 

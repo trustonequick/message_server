@@ -1,22 +1,5 @@
-# honeyquick2-was
-### 꿀퀵 시즌2 서버
-
-시즌1은 중계망 API 였다면 시즌2는 퀵사와 기사님을 위한 **API & Socket** 서버다.
-
----
-[!python]
-## 구성
-* [Python](https://www.python.org/)
-* [FastAPI](https://fastapi.tiangolo.com/)
-* [python-Socketio](https://python-socketio.readthedocs.io/en/latest/)
-* [Redis](https://python-socketio.readthedocs.io/en/latest/)
-* [SQLAlchemy](https://www.sqlalchemy.org/)
-* [Requests](https://docs.python-requests.org/en/latest/)
-* [PyJWT](https://pyjwt.readthedocs.io/en/latest/)
-* [PyMySQL](https://github.com/PyMySQL/PyMySQL)
-* [bcrypt](https://pypi.org/project/bcrypt/)
-
----
+# Smeffi Message Server
+스매피 통합 메시지 서버다.
 
 ## 개발 설정 (PyCharm 기준)
 1. Python 3.9 설치 ([Python 3.9 다운로드](https://www.python.org/downloads/))

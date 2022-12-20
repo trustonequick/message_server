@@ -23,7 +23,13 @@ class SMSRequest(BaseModel):
     receiver_number: str
 
 
+class SMSMultiRequest(BaseModel):
+    sender_data: list
+
 
 class SenderResponse(BaseModel):
     results: list = None
 
+
+class SenderMultiResponse(BaseModel):
+    results: list = None

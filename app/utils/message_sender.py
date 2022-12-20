@@ -134,3 +134,60 @@ async def sms_message_send(msg: str, title: str, sender_number: str, receiver_nu
     except Exception as e:
         console_write("sms error == ", e)
         return {'results': [{'code': '0000', 'desc': 'Fail', 'msg_key': ''}]}
+
+
+# SMS 멀티 문자 발송
+async def smsmulti_message_send(senddata: list):
+    try:
+        console_write("발송: SMS msg send")
+        conn = http.client.HTTPSConnection(DefaultInfo.CJMPLACE_URL, timeout=5)
+
+        millis = int(round(time.time() * 1000))
+        num = random.randrange(100, 999)
+        msg_key = str(millis) + str(num)
+
+        msg_data = []
+        msg_cnt = 0
+        for data in senddata:
+            putdata = {
+                "msg_key": msg_key + str(msg_cnt),
+                "sender_number": data["sender_number"],
+                "receiver_number": data["receiver_number"],
+                "title": data["title"],
+                "msg": data["msg"]
+            }
+            msg_data.append(putdata)
+            msg_cnt = msg_cnt + 1
+
+        payload_dict = {
+            "msg_type": "SMS",
+            "msg_data": msg_data
+        }
+
+        payload = json.dumps(payload_dict)
+        headers = {"Authorization": DefaultInfo.CJMPLACE_SMS_AUTHORIZATION, "Content-Type": "application/json",
+                   "charset": "utf8"}
+        conn.request("POST", DefaultInfo.CJMPLACE_SMS_SUB_URL, payload.encode('utf-8'), headers)
+
+        res = conn.getresponse()
+        data_read = res.read()
+        data = json.loads(data_read.decode("utf-8"))
+
+        console_write("SMS Multi 발송 결과: ", data)
+        return data
+
+    except Exception as e:
+        console_write("sms multi error == ", e)
+        return {'results': [{'code': '0000', 'desc': 'Fail', 'msg_key': ''}]}
+
+
+
+
+
+
+
+
+
+
+
+    # .msg, req.title, req.sender_number, req.receiver_number
